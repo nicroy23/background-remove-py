@@ -1,14 +1,12 @@
 from PIL import Image
-from PIL import ImageColor
-import numpy as np
-import os
-import random
+from PIL import ImageDraw
+from PIL import ImageFont
 
 
 def remove_background(path):
     green_screen = Image.open(path)
     pix = 1, 1
-    background = 255, 255, 255, 0
+    background = (0, 0, 0, 255)
     to_see = green_screen.getpixel(pix)
     for pixel1 in range(green_screen.width):
         for pixel2 in range(green_screen.height):
@@ -16,23 +14,52 @@ def remove_background(path):
             analyzed_pixel = green_screen.getpixel(current_pixel)
             if analyzed_pixel == to_see:
                 green_screen.putpixel(current_pixel, background)
-    #new_path = random.random() * 100 + path.split(".")[1]
-    #green_screen.save(new_path)
-    (left, upper, right, lower) = (20, 20, 100, 100)  # temporaire avant que je trouve comment mettre background transparent...
-    return green_screen.crop((left, upper, right, lower))
+    return green_screen
 
 
-def change_background():
+def change_background(back, front):
+    back_img = back
+    fore_img = front
+
+    pix = 1, 1
+
+    to_see = fore_img.getpixel(pix)
+
+    for pixel1 in range(fore_img.width):
+        for pixel2 in range(fore_img.height):
+            current_pixel = pixel1, pixel2
+            analyzed_pixel = fore_img.getpixel(current_pixel)
+            if analyzed_pixel == to_see:
+                fore_img.putpixel(current_pixel, back_img.getpixel(current_pixel))
+
+    return fore_img
+
+
+def add_text(img, text):
+    img = img.convert("RGBA")
+    txt = Image.new("RGBA", img.size, (255, 255, 255, 0))
+
+    fnt = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", 200)
+
+    draw = ImageDraw.Draw(txt)
+    draw.text((10, 60), text, font=fnt, fill=(255, 255, 255, 255))
+    out = Image.alpha_composite(img, txt)
+
+    return out
+
+
+def create_thumbnail():
     background_img = input("Entrez le nom de l'image de fond: ")
     foreground_img = input("Entrez le nom de l'image en premier plan: ")
-    destination = input("Entrez le nom du nouveau fichier: ")
-
-    cropped_img = remove_background(foreground_img)
+    text = input("Entrez le texte à mettre sur la couverture: ")
 
     back_img = Image.open(background_img)
-    back_img.paste(cropped_img)
+    fore_img = Image.open(foreground_img)
 
-    back_img.save(destination)
+    changed_bg = change_background(back_img, fore_img)
+    final = add_text(changed_bg, text)
+
+    final.show()
 
 
-change_background()
+create_thumbnail()
