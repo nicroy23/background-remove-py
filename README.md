@@ -7,4 +7,4 @@ Program to remove background from greenscreen image.
 
 **After crop**
 
-![Alt text](test.jpg?raw=true "After")
+![Alt text](Imgs/test.jpg?raw=true "After")
