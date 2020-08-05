@@ -3,20 +3,6 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 
-def remove_background(path):
-    green_screen = Image.open(path)
-    pix = 1, 1
-    background = (0, 0, 0, 255)
-    to_see = green_screen.getpixel(pix)
-    for pixel1 in range(green_screen.width):
-        for pixel2 in range(green_screen.height):
-            current_pixel = pixel1, pixel2
-            analyzed_pixel = green_screen.getpixel(current_pixel)
-            if analyzed_pixel == to_see:
-                green_screen.putpixel(current_pixel, background)
-    return green_screen
-
-
 def change_background(back, front):
     back_img = back
     fore_img = front
